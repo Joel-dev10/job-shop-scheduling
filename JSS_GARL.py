@@ -11,6 +11,7 @@ def main() -> None:
 
     machine_count = 1 + max(task[0] for job in jobs_data for task in job)
     job_count = len(jobs_data)
+    
     job_queues = [deque(job) for job in jobs_data]
     job_details = [[0,0] for _ in jobs_data]    # Will give the possible start time and task counter.
     schedule = [deque() for _ in range(machine_count)]  # Should contain [(job,task),[start_time,end_time]]
