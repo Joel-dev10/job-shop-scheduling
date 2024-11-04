@@ -25,8 +25,8 @@ def create_schedule(jobs_data):
 
 
 def fitness_function(schedule):
-    makespan = max(sch[-1][1][1] for sch in schedule)
-    return makespan
+    score = 100/max(sch[-1][1][1] for sch in schedule)
+    return score
 
 
 def display(schedule, makespan):
@@ -63,8 +63,8 @@ def main() -> None:
 
     fitness_scores = [fitness_function(schedule) for schedule in population]
 
-    idx = fitness_scores.index(min(fitness_scores))
-    makespan = fitness_scores[idx]
+    idx = fitness_scores.index(max(fitness_scores))
+    makespan = max(sch[-1][1][1] for sch in population[idx])
     schedule = population[idx]
 
     display(schedule, makespan)
