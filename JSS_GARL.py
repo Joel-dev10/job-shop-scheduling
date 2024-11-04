@@ -25,6 +25,7 @@ def create_schedule(jobs_data):
 
 
 def fitness_function(schedule):
+    # 100 is taken as makespan presently does not go over than 100 units.
     score = 100/max(sch[-1][1][1] for sch in schedule)
     return score
 
@@ -52,9 +53,9 @@ def display(schedule, makespan):
 def main() -> None:
 
     jobs_data = [  # task = (machine_id, processing_time).
-         [(0, 3), (1, 2), (2, 2), (3, 4)],  # Job0
-        [(0, 2), (2, 1), (1, 4)],  # Job1
-        [(1, 4), (2, 3)],  # Job2
+        [(0, 3), (1, 2), (2, 2), (3, 4)],   # Job0
+        [(0, 2), (2, 1), (1, 4)],   # Job1
+        [(1, 4), (2, 3)],   # Job2
         [(2, 2), (0, 1), (3, 3), (1, 2)]    # Job3
     ]
 
