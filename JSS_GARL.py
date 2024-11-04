@@ -24,6 +24,11 @@ def create_schedule(jobs_data):
     return schedule
 
 
+def fitness_function(schedule):
+    makespan = max(sch[-1][1][1] for sch in schedule)
+    return makespan
+
+
 def display(schedule, makespan):
     print(f"The makespan of the optimal solution is: {makespan}")
     output = ""
@@ -42,15 +47,22 @@ def display(schedule, makespan):
 
 
 def main() -> None:
+
     jobs_data = [  # task = (machine_id, processing_time).
-        [(0, 3), (1, 2), (2, 2)],  # Job0
+         [(0, 3), (1, 2), (2, 2), (3, 4)],  # Job0
         [(0, 2), (2, 1), (1, 4)],  # Job1
-        [(1, 4), (2, 3)]  # Job2
+        [(1, 4), (2, 3)],  # Job2
+        [(2, 2), (0, 1), (3, 3), (1, 2)]    # Job3
     ]
 
-    schedule = create_schedule(jobs_data)  
+    population_size = 10
+    population = [create_schedule(jobs_data) for _ in range (population_size)]
 
-    makespan = max(sch[-1][1][1] for sch in schedule)
+    fitness_scores = [fitness_function(schedule) for schedule in population]
+
+    idx = fitness_scores.index(min(fitness_scores))
+    makespan = fitness_scores[idx]
+    schedule = population[idx]
 
     display(schedule, makespan)
 
