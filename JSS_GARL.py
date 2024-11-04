@@ -38,10 +38,13 @@ def display(schedule, makespan):
             job = op[0][0]
             task = op[0][1]
             output += f"\tJob_{job} task{ task}"
-        output += "\n"
+        output += "\n\t\t"
         for op in schedule[mac]:
             time = op[1]
-            output += f"\t\t{time}"
+            if len(str(time)) < 8:
+                output += f"{time}\t\t"
+            else:
+                output += f"{time}\t"
         output += "\n"
     print(output)
 
