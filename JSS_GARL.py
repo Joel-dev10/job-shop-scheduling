@@ -50,6 +50,17 @@ def display(schedule, makespan):
     print(output)
 
 
+def crossover(parent1, parent2, machine_count):
+    crosspoint = random.randint(0, machine_count-1)
+    child1 = parent1[:crosspoint] + parent2[crosspoint:]
+    child2 = parent2[crosspoint:] + parent1[:crosspoint]
+    return child1, child2
+
+
+def correction(schedule, jobs_data):
+    
+
+
 def main() -> None:
 
     jobs_data = [  # task = (machine_id, processing_time).
@@ -59,9 +70,30 @@ def main() -> None:
         [(2, 2), (0, 1), (3, 3), (1, 2)]    # Job3
     ]
 
+    machine_count = 1 + max(task[0] for job in jobs_data for task in job)
+
     population_size = 10
     population = [create_schedule(jobs_data) for _ in range (population_size)]
 
+    fitness_scores = [fitness_function(schedule) for schedule in population]
+
+    next_population = []
+    temp_pop = [x for x, _ in sorted(zip(population, fitness_scores), key = lambda pair: pair[1], reverse = True)[:8]]
+    next_population.append(temp_pop[0])
+    next_population.append(temp_pop[1])
+    while len(next_population) < population_size:
+        parent1 = random.choice(temp_pop)
+        temp_pop.remove(parent1)
+        parent2 = random.choice(temp_pop)
+        temp_pop.remove(parent2)
+        child1, child2 = crossover(parent1, parent2, machine_count)
+        child1 = correction(child1, jobs_data)
+        child2 = correction(child2, jobs_data)
+        next_population.append(child1)
+        next_population.append(child2)
+
+
+    population = next_population
     fitness_scores = [fitness_function(schedule) for schedule in population]
 
     idx = fitness_scores.index(max(fitness_scores))
