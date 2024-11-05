@@ -118,10 +118,11 @@ def main() -> None:
 
     for generation in range(generation_size):
         next_population = []
-        temp_pop = [x for x, _ in sorted(zip(population, fitness_scores), key = lambda pair: pair[1], reverse = True)[:8]]
+        length = population_size - int(population_size*10/generation_size) - int(generation/population_size)
+        temp_pop = [x for x, _ in sorted(zip(population, fitness_scores), key = lambda pair: pair[1], reverse = True)[:length]]
         next_population.append(temp_pop[0])
         next_population.append(temp_pop[1])
-        
+
         while len(next_population) < population_size:
             parent1 = random.choice(temp_pop)
             parent2 = random.choice(temp_pop)
