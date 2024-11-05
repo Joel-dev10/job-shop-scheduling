@@ -37,6 +37,14 @@ def crossover(parent1, parent2, machine_count):
     return child1, child2
 
 
+def mutate(child, machine_count):
+    # Scramble Mutation is implemented for a single machine.
+    machine = random.randint(0, machine_count-1)
+    random.shuffle(child[machine])
+    return child
+    
+
+
 def add(temp_sch, job_start, machine_start, jobs_data, job, task):
     if task == 0 or (job, task-1) in [col[0] for row in temp_sch for col in row]:
         machine = jobs_data[job][task][0]
@@ -103,25 +111,32 @@ def main() -> None:
     machine_count = 1 + max(task[0] for job in jobs_data for task in job)
 
     population_size = 10
+    generation_size = 50
+
     population = [create_schedule(jobs_data) for _ in range (population_size)]
-
     fitness_scores = [fitness_function(schedule) for schedule in population]
 
-    next_population = []
-    temp_pop = [x for x, _ in sorted(zip(population, fitness_scores), key = lambda pair: pair[1], reverse = True)[:8]]
-    next_population.append(temp_pop[0])
-    next_population.append(temp_pop[1])
-    while len(next_population) < population_size:
-        parent1 = random.choice(temp_pop)
-        parent2 = random.choice(temp_pop)
-        child1, child2 = crossover(parent1, parent2, machine_count)
-        child1 = correction(child1, jobs_data)
-        child2 = correction(child2, jobs_data)
-        next_population.append(child1)
-        next_population.append(child2)
+    for generation in range(generation_size):
+        next_population = []
+        temp_pop = [x for x, _ in sorted(zip(population, fitness_scores), key = lambda pair: pair[1], reverse = True)[:8]]
+        next_population.append(temp_pop[0])
+        next_population.append(temp_pop[1])
+        
+        while len(next_population) < population_size:
+            parent1 = random.choice(temp_pop)
+            parent2 = random.choice(temp_pop)
+            child1, child2 = crossover(parent1, parent2, machine_count)
+            if random.random() < 0.1:
+                child1 = mutate(child1, machine_count)
+            if random.random() < 0.1:
+                child2 = mutate(child2, machine_count)
+            child1 = correction(child1, jobs_data)
+            child2 = correction(child2, jobs_data)
+            next_population.append(child1)
+            next_population.append(child2)
 
-    population = next_population
-    fitness_scores = [fitness_function(schedule) for schedule in population]
+        population = next_population
+        fitness_scores = [fitness_function(schedule) for schedule in population]
 
     idx = fitness_scores.index(max(fitness_scores))
     makespan = max(sch[-1][1][1] for sch in population[idx])
