@@ -57,9 +57,39 @@ def crossover(parent1, parent2, machine_count):
     return child1, child2
 
 
-def correction(schedule, jobs_data):
-    
+def add(temp_sch, job_start, machine_start, jobs_data, job, task):
+    if task == 0 or (job, task-1) in [col[0] for row in temp_sch for col in row]:
+        machine = jobs_data[job][task][0]
+        duration = jobs_data[job][task][1]
+        start = max(machine_start[machine], job_start[job])
+        temp_sch[machine].append([(job, task), [start, start+duration]])
+        machine_start[machine] = start + duration
+        job_start[job] = start + duration
+        return temp_sch, job_start, machine_start
+    else:
+        temp_sch, job_start, machine_start = add(temp_sch, job_start, machine_start, jobs_data, job, task-1)
+        machine = jobs_data[job][task][0]
+        duration = jobs_data[job][task][1]
+        start = max(machine_start[machine], job_start[job])
+        temp_sch[machine].append([(job, task), [start, start+duration]])
+        machine_start[machine] = start + duration
+        job_start[job] = start + duration
+        return temp_sch, job_start, machine_start
 
+
+def correction(schedule, jobs_data):
+    # Correcting now according to the task list of the first machine. In future can be done according to machine priority.
+    job_start = [0 for _ in jobs_data]
+    machine_start = [0 for _ in schedule]
+    temp_sch = [deque() for _ in schedule]
+    for sch in schedule:
+        for op in sch:             
+            while op[0] not in [col[0] for row in temp_sch for col in row]:
+                job = op[0][0]
+                task = op[0][1]
+                temp_sch, job_start, machine_start = add(temp_sch, job_start, machine_start, jobs_data, job, task)
+    return temp_sch
+                
 
 def main() -> None:
 
@@ -83,15 +113,12 @@ def main() -> None:
     next_population.append(temp_pop[1])
     while len(next_population) < population_size:
         parent1 = random.choice(temp_pop)
-        temp_pop.remove(parent1)
         parent2 = random.choice(temp_pop)
-        temp_pop.remove(parent2)
         child1, child2 = crossover(parent1, parent2, machine_count)
         child1 = correction(child1, jobs_data)
         child2 = correction(child2, jobs_data)
         next_population.append(child1)
         next_population.append(child2)
-
 
     population = next_population
     fitness_scores = [fitness_function(schedule) for schedule in population]
