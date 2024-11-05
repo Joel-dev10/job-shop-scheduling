@@ -30,26 +30,6 @@ def fitness_function(schedule):
     return score
 
 
-def display(schedule, makespan):
-    print(f"The makespan of the optimal solution is: {makespan}")
-    output = ""
-    for mac in range(len(schedule)):
-        output += f"Machine {mac}: "
-        for op in schedule[mac]:
-            job = op[0][0]
-            task = op[0][1]
-            output += f"\tJob_{job} task{ task}"
-        output += "\n\t\t"
-        for op in schedule[mac]:
-            time = op[1]
-            if len(str(time)) < 8:
-                output += f"{time}\t\t"
-            else:
-                output += f"{time}\t"
-        output += "\n"
-    print(output)
-
-
 def crossover(parent1, parent2, machine_count):
     crosspoint = random.randint(0, machine_count-1)
     child1 = parent1[:crosspoint] + parent2[crosspoint:]
@@ -89,6 +69,26 @@ def correction(schedule, jobs_data):
                 task = op[0][1]
                 temp_sch, job_start, machine_start = add(temp_sch, job_start, machine_start, jobs_data, job, task)
     return temp_sch
+
+
+def display(schedule, makespan):
+    print(f"The makespan of the optimal solution is: {makespan}")
+    output = ""
+    for mac in range(len(schedule)):
+        output += f"Machine {mac}: "
+        for op in schedule[mac]:
+            job = op[0][0]
+            task = op[0][1]
+            output += f"\tJob_{job} task_{task}"
+        output += "\n\t\t"
+        for op in schedule[mac]:
+            time = op[1]
+            if len(str(time)) < 8:
+                output += f"{time}\t\t"
+            else:
+                output += f"{time}\t"
+        output += "\n"
+    print(output)
                 
 
 def main() -> None:
