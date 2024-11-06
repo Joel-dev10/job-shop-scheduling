@@ -41,7 +41,6 @@ def mutate(child, machine_count):
     # Scramble Mutation is implemented for a single machine.
     machine = random.randint(0, machine_count-1)
     random.shuffle(child[machine])
-    return child
     
 
 
@@ -53,16 +52,14 @@ def add(temp_sch, job_start, machine_start, jobs_data, job, task):
         temp_sch[machine].append([(job, task), [start, start+duration]])
         machine_start[machine] = start + duration
         job_start[job] = start + duration
-        return temp_sch, job_start, machine_start
     else:
-        temp_sch, job_start, machine_start = add(temp_sch, job_start, machine_start, jobs_data, job, task-1)
+        add(temp_sch, job_start, machine_start, jobs_data, job, task-1)
         machine = jobs_data[job][task][0]
         duration = jobs_data[job][task][1]
         start = max(machine_start[machine], job_start[job])
         temp_sch[machine].append([(job, task), [start, start+duration]])
         machine_start[machine] = start + duration
         job_start[job] = start + duration
-        return temp_sch, job_start, machine_start
 
 
 def correction(schedule, jobs_data):
@@ -75,7 +72,7 @@ def correction(schedule, jobs_data):
             while op[0] not in [col[0] for row in temp_sch for col in row]:
                 job = op[0][0]
                 task = op[0][1]
-                temp_sch, job_start, machine_start = add(temp_sch, job_start, machine_start, jobs_data, job, task)
+                add(temp_sch, job_start, machine_start, jobs_data, job, task)
     return temp_sch
 
 
@@ -128,9 +125,9 @@ def main() -> None:
             parent2 = random.choice(temp_pop)
             child1, child2 = crossover(parent1, parent2, machine_count)
             if random.random() < 0.1:
-                child1 = mutate(child1, machine_count)
+                mutate(child1, machine_count)
             if random.random() < 0.1:
-                child2 = mutate(child2, machine_count)
+                mutate(child2, machine_count)
             child1 = correction(child1, jobs_data)
             child2 = correction(child2, jobs_data)
             next_population.append(child1)
