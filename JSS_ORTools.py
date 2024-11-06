@@ -11,6 +11,7 @@ def main() -> None:
         [(0, 2), (2, 1), (1, 4)],  # Job1
         [(1, 4), (2, 3)],  # Job2
         [(2, 2), (0, 1), (3, 3), (1, 2)],    # Job3
+        [(3, 4), (1, 2), (3, 1)],   # Job4
     ]
 
     machines_count = 1 + max(task[0] for job in jobs_data for task in job)
