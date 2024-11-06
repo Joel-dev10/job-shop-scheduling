@@ -137,8 +137,10 @@ def main() -> None:
         fitness_scores = [fitness_function(schedule) for schedule in population]
 
     idx = fitness_scores.index(max(fitness_scores))
-    makespan = max(sch[-1][1][1] for sch in population[idx])
     schedule = population[idx]
+    for i in range(len(schedule)):
+        schedule[i] = sorted(schedule[i], key=lambda op: op[1][0])
+    makespan = max(sch[-1][1][1] for sch in schedule)
 
     display(schedule, makespan)
 
